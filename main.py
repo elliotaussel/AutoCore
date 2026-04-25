@@ -1,6 +1,12 @@
 import sys
 import time
 import threading
+import CoreFoundation
+import Foundation
+import AppKit
+import Quartz
+import ApplicationServices
+import HIServices
 import webbrowser
 from PyQt6.QtWidgets import (QApplication, QWidget, QPushButton, QHBoxLayout, 
                              QVBoxLayout, QLabel, QSpinBox, QMenu, QMainWindow)
@@ -164,6 +170,22 @@ class AutoCore(QWidget):
 
     def show_options_menu(self):
         menu = QMenu(self)
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: #ffffff;
+                border: 1px solid #d1d1d6;
+                border-radius: 5px;
+            }
+            QMenu::item {
+                padding: 6px 20px;
+                background-color: transparent;
+                color: #1d1d1f;
+            }
+            QMenu::item:selected {
+                background-color: #007aff;
+                color: white;
+            }
+        """)
         
         action_rec_key = QAction(f"Assign Record Key (Current: {self.record_hotkey_name})", self)
         action_rec_key.triggered.connect(self.start_assign_record_key)
