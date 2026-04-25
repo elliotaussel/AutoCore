@@ -352,8 +352,14 @@ class AutoCore(QWidget):
                 # Wait until it's time to execute this event
                 time_to_wait = event_time - last_event_time
                 if time_to_wait > 0:
-                    time.sleep(time_to_wait)
+                    wait_accumulated = 0
+                    while wait_accumulated < time_to_wait and self.is_playing:
+                        time.sleep(0.01)
+                        wait_accumulated += 0.01
                 
+                if not self.is_playing:
+                    break
+
                 try:
                     if event_type == 'mouse_move':
                         self.mouse_controller.position = data
@@ -382,13 +388,17 @@ class AutoCore(QWidget):
             if self.is_playing:
                 time_to_wait_end = self.total_record_time - elapsed_play_time
                 if time_to_wait_end > 0:
-                    time.sleep(time_to_wait_end)
+                    wait_accumulated = 0
+                    while wait_accumulated < time_to_wait_end and self.is_playing:
+                        time.sleep(0.01)
+                        wait_accumulated += 0.01
             
             self.action_timer.stop()
             if not is_infinite:
                 self.current_loop += 1
 
-        self.emitter.toggle_play_signal.emit()
+        if self.is_playing:
+            self.emitter.toggle_play_signal.emit()
 
     def record_event(self, event_type, data):
         if self.is_recording:
